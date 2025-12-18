@@ -6,18 +6,30 @@ import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createIssueSchema } from "@/app/createIssueSchema";
+import z from "zod";
+import { Text } from "@radix-ui/themes/components/callout";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
   ssr: false,
 });
 
-interface IssueForm {
-  name: string;
-  description: string;
-}
+type IssueForm = z.infer<typeof createIssueSchema>;
 
 const NewIssuePage = () => {
-  const { register, control, handleSubmit } = useForm<IssueForm>();
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IssueForm>({
+    resolver: zodResolver(createIssueSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+    },
+  });
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -41,6 +53,7 @@ const NewIssuePage = () => {
         })}
       >
         <TextField.Root placeholder="Title" {...register("name")} />
+        {errors.name && <Text color="red">{errors.name.message}</Text>}
 
         <Controller
           name="description"
@@ -57,6 +70,9 @@ const NewIssuePage = () => {
             </div>
           )}
         />
+        {errors.description && (
+          <Text color="red">{errors.description.message}</Text>
+        )}
 
         <Button>Submit New Issue</Button>
       </form>
