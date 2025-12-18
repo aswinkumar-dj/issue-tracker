@@ -11,6 +11,7 @@ import { createIssueSchema } from "@/app/validationSchemas";
 import z from "zod";
 import { Text } from "@radix-ui/themes/components/callout";
 import ErrorMessage from "@/app/components/ErrorMessage";
+import Spinner from "@/app/components/Spinner";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -32,6 +33,7 @@ const NewIssuePage = () => {
     },
   });
   const [error, setError] = useState("");
+  const [isSubmitting, setSubmitting] = useState(false);
   const router = useRouter();
 
   return (
@@ -45,10 +47,11 @@ const NewIssuePage = () => {
         className=" space-y-3"
         onSubmit={handleSubmit(async (data) => {
           try {
+            setSubmitting(true);
             await axios.post("/api/issues", data);
             router.push("/issues");
           } catch (error) {
-            console.log(error);
+            setSubmitting(false);
             setError("An unexpected error occured.");
           }
         })}
@@ -74,7 +77,9 @@ const NewIssuePage = () => {
 
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
 
-        <Button>Submit New Issue</Button>
+        <Button disabled={isSubmitting}>
+          Submit New Issue {isSubmitting && <Spinner />}
+        </Button>
       </form>
     </div>
   );
