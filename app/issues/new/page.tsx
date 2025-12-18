@@ -7,9 +7,10 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createIssueSchema } from "@/app/createIssueSchema";
+import { createIssueSchema } from "@/app/validationSchemas";
 import z from "zod";
 import { Text } from "@radix-ui/themes/components/callout";
+import ErrorMessage from "@/app/components/ErrorMessage";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
   ssr: false,
@@ -53,7 +54,7 @@ const NewIssuePage = () => {
         })}
       >
         <TextField.Root placeholder="Title" {...register("name")} />
-        {errors.name && <Text color="red">{errors.name.message}</Text>}
+        <ErrorMessage>{errors.name?.message}</ErrorMessage>
 
         <Controller
           name="description"
@@ -70,9 +71,8 @@ const NewIssuePage = () => {
             </div>
           )}
         />
-        {errors.description && (
-          <Text color="red">{errors.description.message}</Text>
-        )}
+
+        <ErrorMessage>{errors.description?.message}</ErrorMessage>
 
         <Button>Submit New Issue</Button>
       </form>
