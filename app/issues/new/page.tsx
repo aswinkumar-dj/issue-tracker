@@ -9,9 +9,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createIssueSchema } from "@/app/validationSchemas";
 import z from "zod";
-import { Text } from "@radix-ui/themes/components/callout";
-import ErrorMessage from "@/app/components/ErrorMessage";
-import Spinner from "@/app/components/Spinner";
+import { ErrorMessage, Spinner } from "@/app/components";
 
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), {
   ssr: false,
